@@ -13,9 +13,28 @@ import {
   postUser,
   putUser,
 } from "../controller/Users.js";
-import { getSchedule } from "../controller/Schedule.js";
-import { getDonor } from "../controller/Donor.js";
-import { getEmail } from "../controller/Email.js";
+import {
+  deleteSchedule,
+  getSchedule,
+  getScheduleById,
+  postSchedule,
+  putSchedule,
+} from "../controller/Schedule.js";
+import {
+  deleteDonor,
+  getDonor,
+  getDonorById,
+  postDonor,
+  putDonor,
+} from "../controller/Donor.js";
+import {
+  deleteEmail,
+  getEmail,
+  getEmailById,
+  postEmail,
+  putEmail,
+  sendEmail,
+} from "../controller/Email.js";
 import { login, register } from "../controller/Auth.js";
 
 const router = express.Router();
@@ -40,11 +59,24 @@ router.delete("/users/:id", deleteUser);
 
 // Schedule
 router.get("/schedule", getSchedule);
+router.get("/schedule/:id", getScheduleById);
+router.post("/schedule", postSchedule);
+router.put("/schedule/:id", putSchedule);
+router.delete("/schedule/:id", deleteSchedule);
 
 // Donor
 router.get("/donor", getDonor);
+router.get("/donor/:id", getDonorById);
+router.post("/donor", postDonor);
+router.put("/donor/:id", putDonor);
+router.delete("/donor/:id", deleteDonor);
 
 // Email
 router.get("/email", getEmail);
+router.get("/email/:id", getEmailById);
+router.post("/email", postEmail);
+router.put("/email/:id", putEmail);
+router.delete("/email/:id", deleteEmail);
+router.post("/email/send", sendEmail);
 
 export default router;

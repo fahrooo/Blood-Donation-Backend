@@ -1,4 +1,4 @@
-import { Op, where } from "sequelize";
+import { Op } from "sequelize";
 import Faculty from "../models/FacultyModel.js";
 
 export const getFaculty = async (req, res) => {

@@ -5,7 +5,7 @@ import Faculty from "./FacultyModel.js";
 const { DataTypes } = Sequelize;
 
 const Email = db.define(
-  "Email",
+  "email",
   {
     idFaculty: {
       type: DataTypes.INTEGER,
