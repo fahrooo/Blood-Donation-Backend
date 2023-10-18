@@ -6,7 +6,13 @@ import {
   postFaculty,
   putFaculty,
 } from "../controller/Faculty.js";
-import { getUser } from "../controller/Users.js";
+import {
+  deleteUser,
+  getUser,
+  getUserById,
+  postUser,
+  putUser,
+} from "../controller/Users.js";
 import { getSchedule } from "../controller/Schedule.js";
 import { getDonor } from "../controller/Donor.js";
 import { getEmail } from "../controller/Email.js";
@@ -27,6 +33,10 @@ router.delete("/faculty/:id", deleteFaculty);
 
 // Users
 router.get("/users", getUser);
+router.get("/users/:id", getUserById);
+router.post("/users", postUser);
+router.put("/users/:id", putUser);
+router.delete("/users/:id", deleteUser);
 
 // Schedule
 router.get("/schedule", getSchedule);

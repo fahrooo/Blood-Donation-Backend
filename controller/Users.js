@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { Op } from "sequelize";
 import Users from "../models/UsersModel.js";
 import Faculty from "../models/FacultyModel.js";
@@ -243,6 +244,152 @@ export const getUser = async (req, res) => {
         rowsPage: offset + 1 + user.length - 1,
         totalRows: user.length ? totalRows : null,
         totalPage: user.length ? totalPage : null,
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error,
+    });
+  }
+};
+
+export const getUserById = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const checkUserById = await Users.findByPk(id);
+
+    if (checkUserById) {
+      return res.status(200).json({
+        status: 200,
+        data: checkUserById,
+      });
+    } else {
+      return res.status(404).json({
+        status: 404,
+        message: "Data not found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error,
+    });
+  }
+};
+
+export const postUser = async (req, res) => {
+  const { idFaculty, name, gender, email, phone, role, password } = req.body;
+
+  const salt = await bcrypt.genSalt();
+  const hashPassword = await bcrypt.hash(password, salt);
+
+  try {
+    const user = await Users.create({
+      idFaculty,
+      name,
+      gender,
+      email,
+      phone,
+      role,
+      password: hashPassword,
+    });
+
+    if (user) {
+      return res.status(200).json({
+        status: 200,
+        message: "Created successfully",
+      });
+    } else {
+      return res.status(400).json({
+        status: 400,
+        message: "Created Failed",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error,
+    });
+  }
+};
+
+export const putUser = async (req, res) => {
+  const { idFaculty, name, gender, email, phone, role, password } = req.body;
+  const id = req.params.id;
+
+  const salt = await bcrypt.genSalt();
+  const hashPassword = await bcrypt.hash(password, salt);
+
+  try {
+    const checkUserById = await Users.findByPk(id);
+
+    if (checkUserById) {
+      const user = await Users.update(
+        {
+          idFaculty,
+          name,
+          gender,
+          email,
+          phone,
+          role,
+          password: hashPassword,
+        },
+        {
+          where: { id },
+        }
+      );
+
+      if (user) {
+        return res.status(200).json({
+          status: 200,
+          message: "Updated successfully",
+        });
+      } else {
+        return res.status(400).json({
+          status: 400,
+          message: "Updated Failed",
+        });
+      }
+    } else {
+      return res.status(404).json({
+        status: 404,
+        message: "Data not found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error,
+    });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    const checkUserById = await Users.findByPk(id);
+
+    if (checkUserById) {
+      const user = await Users.destroy({ where: { id } });
+
+      if (user) {
+        return res.status(200).json({
+          status: 200,
+          message: "Deleted successfully",
+        });
+      } else {
+        return res.status(400).json({
+          status: 400,
+          message: "Deleted Failed",
+        });
+      }
+    } else {
+      return res.status(404).json({
+        status: 404,
+        message: "Data not found",
       });
     }
   } catch (error) {
