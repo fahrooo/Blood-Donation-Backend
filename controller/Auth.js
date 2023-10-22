@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import Users from "../models/UsersModel.js";
+import jwtEncode from "jwt-encode";
 
 export const register = async (req, res) => {
   const { idFaculty, name, gender, email, phone, role, password } = req.body;
@@ -8,31 +9,41 @@ export const register = async (req, res) => {
   const hashPassword = await bcrypt.hash(password, salt);
 
   try {
-    const user = await Users.create({
-      idFaculty,
-      name,
-      gender,
-      email,
-      phone,
-      role,
-      password: hashPassword,
-    });
+    const checkUser = await Users.findOne({ where: { email } });
 
-    if (user) {
-      return res.status(200).json({
-        status: 200,
-        message: "Created successfully",
+    if (!checkUser) {
+      const user = await Users.create({
+        idFaculty,
+        name,
+        gender,
+        email,
+        phone,
+        role,
+        password: hashPassword,
       });
+
+      if (user) {
+        return res.status(200).json({
+          status: 200,
+          message: "Created successfully",
+        });
+      } else {
+        return res.status(400).json({
+          status: 400,
+          message: "Created Failed",
+        });
+      }
     } else {
-      return res.status(400).json({
-        status: 400,
-        message: "Created Failed",
+      return res.status(404).json({
+        status: 404,
+        message: "Email is already",
       });
     }
   } catch (error) {
+    console.log(error.message)
     return res.status(500).json({
       status: 500,
-      message: error,
+      message: error.message,
     });
   }
 };
@@ -56,10 +67,12 @@ export const login = async (req, res) => {
       const match = await bcrypt.compare(password, user.password);
 
       if (match) {
+        const token = jwtEncode(user, process.env.JWT_SECRET_KEY);
+
         res.status(200).json({
           status: 200,
           message: "Berhasil Login",
-          data: user,
+          data: token,
         });
       } else {
         return res.status(400).json({ status: 400, message: "Wrong Password" });

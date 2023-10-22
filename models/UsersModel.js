@@ -21,7 +21,7 @@ const Users = db.define(
       type: DataTypes.STRING,
     },
     phone: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
     },
     role: {
       type: DataTypes.ENUM("1", "2", "3", "4"),
@@ -37,7 +37,7 @@ const Users = db.define(
 
 Users.belongsTo(Faculty, {
   foreignKey: "idFaculty",
-  onDelete: "CASCADE",
+  onDelete: "SET NULL",
   onUpdate: "CASCADE",
 });
 
