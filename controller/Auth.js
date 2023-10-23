@@ -78,7 +78,7 @@ export const login = async (req, res) => {
         res.status(200).json({
           status: 200,
           message: "Berhasil Login",
-          data: token,
+          token: token,
         });
       } else {
         return res.status(400).json({ status: 400, message: "Wrong Password" });
