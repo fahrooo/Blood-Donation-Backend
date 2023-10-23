@@ -59,7 +59,7 @@ export const login = async (req, res) => {
       attributes: ["id"],
     });
 
-    if (user == null) {
+    if (userId == null) {
       return res.status(404).json({
         status: 404,
         message: "Email Not Found",
