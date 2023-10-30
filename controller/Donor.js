@@ -1,8 +1,9 @@
-import { Op } from "sequelize";
+import { Op, QueryTypes } from "sequelize";
 import db from "../config/Database.js";
 import Donor from "../models/DonorModel.js";
 import Schedule from "../models/ScheduleModel.js";
 import Users from "../models/UsersModel.js";
+import Faculty from "../models/FacultyModel.js";
 
 export const getDonor = async (req, res) => {
   const { name = "all", faculty = "all" } = req.query;
@@ -23,8 +24,10 @@ export const getDonor = async (req, res) => {
           },
           {
             model: Schedule,
+            include: [Faculty],
           },
         ],
+        where: { isRegister: true },
         offset: offset,
         limit: limit,
         order: [
@@ -52,9 +55,11 @@ export const getDonor = async (req, res) => {
           },
           {
             model: Schedule,
+            include: [Faculty],
             where: { idFaculty: faculty },
           },
         ],
+        where: { isRegister: true },
       });
 
       const totalPage = Math.ceil(totalRows / limit);
@@ -66,9 +71,11 @@ export const getDonor = async (req, res) => {
           },
           {
             model: Schedule,
+            include: [Faculty],
             where: { idFaculty: faculty },
           },
         ],
+        where: { isRegister: true },
         offset: offset,
         limit: limit,
         order: [
@@ -97,8 +104,10 @@ export const getDonor = async (req, res) => {
           },
           {
             model: Schedule,
+            include: [Faculty],
           },
         ],
+        where: { isRegister: true },
       });
 
       const totalPage = Math.ceil(totalRows / limit);
@@ -111,8 +120,10 @@ export const getDonor = async (req, res) => {
           },
           {
             model: Schedule,
+            include: [Faculty],
           },
         ],
+        where: { isRegister: true },
         offset: offset,
         limit: limit,
         order: [
@@ -141,9 +152,11 @@ export const getDonor = async (req, res) => {
           },
           {
             model: Schedule,
+            include: [Faculty],
             where: { idFaculty: faculty },
           },
         ],
+        where: { isRegister: true },
       });
 
       const totalPage = Math.ceil(totalRows / limit);
@@ -156,9 +169,11 @@ export const getDonor = async (req, res) => {
           },
           {
             model: Schedule,
+            include: [Faculty],
             where: { idFaculty: faculty },
           },
         ],
+        where: { isRegister: true },
         offset: offset,
         limit: limit,
         order: [
@@ -198,6 +213,7 @@ export const getDonorById = async (req, res) => {
         },
         {
           model: Schedule,
+          include: [Faculty],
         },
       ],
     });
@@ -222,13 +238,14 @@ export const getDonorById = async (req, res) => {
 };
 
 export const postDonor = async (req, res) => {
-  const { idUser, idSchedule, isDonor } = req.body;
+  const { idUser, idSchedule, isDonor, isRegister } = req.body;
 
   try {
     const donor = await Donor.create({
       idUser,
       idSchedule,
       isDonor,
+      isRegister,
     });
 
     if (donor) {
@@ -251,7 +268,7 @@ export const postDonor = async (req, res) => {
 };
 
 export const putDonor = async (req, res) => {
-  const { idUser, idSchedule, isDonor } = req.body;
+  const { idUser, idSchedule, isDonor, isRegister } = req.body;
   const id = req.params.id;
 
   try {
@@ -263,6 +280,7 @@ export const putDonor = async (req, res) => {
           idUser,
           idSchedule,
           isDonor,
+          isRegister,
         },
         {
           where: { id },
@@ -324,6 +342,90 @@ export const deleteDonor = async (req, res) => {
     return res.status(500).json({
       status: 500,
       message: error,
+    });
+  }
+};
+
+export const donorByDate = async (req, res) => {
+  const { idUser, date } = req.body;
+
+  try {
+    const donor = await Donor.findAll({
+      where: {
+        idUser: idUser,
+      },
+      include: [
+        {
+          model: Users,
+        },
+        {
+          model: Schedule,
+          where: {
+            closed: {
+              [Op.gte]: date,
+            },
+          },
+          include: [Faculty],
+        },
+      ],
+    });
+
+    if (donor) {
+      return res.status(200).json({
+        status: 200,
+        data: donor,
+      });
+    } else {
+      return res.status(400).json({
+        status: 400,
+        message: "Data Not Found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error.message,
+    });
+  }
+};
+
+export const donorByMonthYear = async (req, res) => {
+  const { month, year } = req.body;
+
+  try {
+    const donor = await db.query(
+      `SELECT
+    * 
+  FROM
+    (
+    SELECT EXTRACT
+      ( MONTH FROM schedule.closed ) AS yr_month,
+      EXTRACT ( YEAR FROM schedule.closed ) AS yr 
+    FROM
+      "donor"
+      JOIN schedule ON donor."idSchedule" = schedule.ID 
+    ) AS DATE 
+  WHERE
+    yr_month = '${month}' 
+    AND yr = '${year}'`,
+      { type: QueryTypes.SELECT }
+    );
+
+    if (donor) {
+      return res.status(200).json({
+        status: 200,
+        data: donor,
+      });
+    } else {
+      return res.status(400).json({
+        status: 400,
+        message: "Data Not Found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: 500,
+      message: error.message,
     });
   }
 };

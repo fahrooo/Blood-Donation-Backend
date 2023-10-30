@@ -22,6 +22,8 @@ import {
 } from "../controller/Schedule.js";
 import {
   deleteDonor,
+  donorByDate,
+  donorByMonthYear,
   getDonor,
   getDonorById,
   postDonor,
@@ -70,6 +72,8 @@ router.get("/donor/:id", getDonorById);
 router.post("/donor", postDonor);
 router.put("/donor/:id", putDonor);
 router.delete("/donor/:id", deleteDonor);
+router.post("/donor/bydate", donorByDate);
+router.post("/donor/bymonthyear", donorByMonthYear);
 
 // Email
 router.get("/email", getEmail);

@@ -24,7 +24,7 @@ const Users = db.define(
       type: DataTypes.BIGINT,
     },
     role: {
-      type: DataTypes.ENUM("1", "2", "3", "4"),
+      type: DataTypes.ENUM("1", "2", "3", "4", "5"),
     },
     password: {
       type: DataTypes.TEXT,

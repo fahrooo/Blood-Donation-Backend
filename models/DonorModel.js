@@ -14,6 +14,9 @@ const Donor = db.define(
     idSchedule: {
       type: DataTypes.INTEGER,
     },
+    isRegister: {
+      type: DataTypes.BOOLEAN,
+    },
     isDonor: {
       type: DataTypes.BOOLEAN,
     },

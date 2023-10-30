@@ -40,7 +40,6 @@ export const register = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log(error.message);
     return res.status(500).json({
       status: 500,
       message: error.message,
@@ -56,7 +55,7 @@ export const login = async (req, res) => {
       where: {
         email: email,
       },
-      attributes: ["id"],
+      attributes: ["id", "role"],
     });
 
     if (userId == null) {
@@ -85,7 +84,6 @@ export const login = async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       status: 500,
       message: error,

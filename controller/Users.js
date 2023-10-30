@@ -316,11 +316,8 @@ export const postUser = async (req, res) => {
 };
 
 export const putUser = async (req, res) => {
-  const { idFaculty, name, gender, email, phone, role, password } = req.body;
+  const { idFaculty, name, gender, email, phone, role } = req.body;
   const id = req.params.id;
-
-  const salt = await bcrypt.genSalt();
-  const hashPassword = await bcrypt.hash(password, salt);
 
   try {
     const checkUserById = await Users.findByPk(id);
@@ -334,7 +331,6 @@ export const putUser = async (req, res) => {
           email,
           phone,
           role,
-          password: hashPassword,
         },
         {
           where: { id },
