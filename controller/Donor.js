@@ -404,6 +404,7 @@ export const donorByMonthYear = async (req, res) => {
     FROM
       "donor"
       JOIN schedule ON donor."idSchedule" = schedule.ID 
+      WHERE donor."isDonor" = TRUE
     ) AS DATE 
   WHERE
     yr_month = '${month}' 
